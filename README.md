@@ -1,107 +1,117 @@
-🔐 Debian 12 SSH 公钥登录加固指南
-<p align="center"> <img src="https://img.shields.io/badge/Debian-12-red?logo=debian"> <img src="https://img.shields.io/badge/SSH-Secure-green?logo=gnubash"> <img src="https://img.shields.io/badge/Auth-PublicKey-blue"> <img src="https://img.shields.io/badge/Security-Hardened-success"> </p>
+# Debian 12 SSH 公钥登录配置手册
 
-🚀 本指南适用于：
-Windows 11 本地环境 + Debian 12 服务器
-实现 SSH 公钥登录 + 禁用密码登录（防爆破）
+本手册适用于将 Windows 11 作为本地环境，对远程 Debian 12 服务器进行公钥登录改造并禁用密码。
 
-📚 目录
-🧱 第一阶段：生成密钥
-📤 第二阶段：上传公钥
-🔌 第三阶段：客户端配置
-🛡️ 第四阶段：禁用密码登录
-✅ 第五阶段：验证安全性
-🆘 紧急恢复
-⚠️ 注意事项
-🧱 第一阶段：生成密钥
+## 第一阶段：本地生成密钥对（Windows 11）
 
-📋 在 Windows PowerShell 执行：
+1. 打开 **PowerShell** 或 **终端**。
 
+2. 执行命令：
+
+```powershell
 ssh-keygen -t ed25519 -f C:\Users\gaoshuiquan\acck
+```
 
-📌 生成结果：
+3. **结果说明**：
+   - `acck`：**私钥**（你的钥匙，绝对不能泄露）
+   - `acck.pub`：**公钥**（锁头，上传到服务器）
 
-文件	说明
-acck	🔑 私钥（严禁泄露）
-acck.pub	🔓 公钥（上传到服务器）
-📤 第二阶段：上传公钥
-✅ 方法一（推荐，一键完成）
-type C:\Users\gaoshuiquan\acck.pub | ssh root@45.192.202.30 "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
-🖱️ 方法二（手动）
+## 第二阶段：上传公钥至服务器
+
+### 方法 A：使用 FinalShell（图形化）
+
+1. 用记事本打开本地 `acck.pub`，复制内容。
+
+2. 登录服务器，执行：
+
+```bash
 mkdir -p ~/.ssh && chmod 700 ~/.ssh
-echo "你的公钥内容" >> ~/.ssh/authorized_keys
+echo "粘贴公钥内容" >> ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
-🔌 第三阶段：客户端配置
-FinalShell 配置：
-项目	配置
-认证方式	公钥
-私钥文件	acck
-密码	passphrase（可为空）
+```
 
-✅ 测试结果：
+### 方法 B：使用 PowerShell 命令（快捷）
 
-无需输入 root 密码即可登录
-🛡️ 第四阶段：禁用密码登录
+```powershell
+type C:\Users\gaoshuiquan\acck.pub | ssh root@45.192.202.30 "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
 
-⚠️ 务必确认公钥登录正常，否则会锁死服务器！
+## 第三阶段：FinalShell 连接配置
 
-🧾 备份配置
+1. 打开 FinalShell 连接管理器 → **右键点击服务器** → **编辑**。
+
+2. **认证方式**：选择 **"公钥"**。
+
+3. **私钥文件**：导入本地的 **acck** 文件。
+
+4. **密码**：填写生成密钥时设置的 passphrase（若无则留空）。
+
+5. 点击确定并尝试连接，确保**无需 root 密码**即可直接登录。
+
+## 第四阶段：服务器端禁用密码（核心加固）
+
+> **⚠️ 注意**：请务必确保已能通过公钥登录成功，再执行此步。
+
+1. **备份原配置**：
+
+```bash
 cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
-🚀 一键加固（可直接复制）
-# 删除旧配置
+```
+
+2. **执行加固命令**（清理并禁用密码通道）：
+
+```bash
+# 删除旧的认证配置
 sed -i '/^PasswordAuthentication/d' /etc/ssh/sshd_config
 sed -i '/^KbdInteractiveAuthentication/d' /etc/ssh/sshd_config
 sed -i '/^PubkeyAuthentication/d' /etc/ssh/sshd_config
 
-# 写入新规则
+# 写入新的安全规则
 echo "PubkeyAuthentication yes" >> /etc/ssh/sshd_config
 echo "PasswordAuthentication no" >> /etc/ssh/sshd_config
 echo "KbdInteractiveAuthentication no" >> /etc/ssh/sshd_config
 
-# 重启服务
+# 重启 SSH 服务
 systemctl restart ssh
-✅ 第五阶段：验证安全性
-🔍 检查配置
+```
+
+## 第五阶段：检查与验证
+
+### 1. 验证配置文件生效情况
+
+```bash
 sshd -T | grep -E "passwordauthentication|kbdinteractiveauthentication"
+```
 
-预期输出：
+- **预期输出**：均为 `no`
 
-passwordauthentication no
-kbdinteractiveauthentication no
-🚫 测试禁止密码登录
+### 2. 验证暴力破解拦截
+
+在本地 PowerShell 输入：
+
+```powershell
 ssh -o PubkeyAuthentication=no root@45.192.202.30
+```
 
-预期：
+- **预期结果**：提示 `Permission denied (publickey)` 且无法输入密码，说明加固成功。
 
-Permission denied (publickey)
+## 🆘 紧急救援与备份
 
-✅ 说明：密码登录已彻底关闭
+### 万一配置错误导致无法登录
 
-🆘 紧急恢复
+1. 通过 VPS 服务商提供的 **VNC 控制台** 登录。
 
-如果你被锁在服务器外：
+2. 还原配置：
+   ```bash
+   cp /etc/ssh/sshd_config.bak /etc/ssh/sshd_config && systemctl restart ssh
+   ```
 
-1️⃣ 使用控制台（VNC）
+### 私钥备份
 
-登录 VPS 面板提供的远程控制台
+请将 `acck`（私钥）文件备份至加密盘或可靠云端。
 
-2️⃣ 恢复配置
-cp /etc/ssh/sshd_config.bak /etc/ssh/sshd_config
-systemctl restart ssh
-⚠️ 注意事项
-🔒 私钥 acck 必须备份
-❌ 丢失私钥 + 禁用密码 = 永久无法登录
-💾 建议备份到：
-加密U盘
-私密云盘
-⭐ 推荐升级（可选）
+> **⚠️ 重要提醒**：一旦丢失私钥，若密码登录已关闭，你将无法再通过网络进入该服务器。
 
-你可以进一步增强安全：
+---
 
-🚫 修改 SSH 端口（防扫描）
-🧱 安装 Fail2ban（防爆破）
-🌐 使用 Cloudflare Tunnel（隐藏真实IP）
-🔐 限制 IP 登录（白名单）
-📅 信息
-创建时间：2026-04-11
-作者：GaoOps
+**手册编写日期**：2026-04-11
