@@ -33,7 +33,7 @@ chmod 600 ~/.ssh/authorized_keys
 ### 方法 B：使用 PowerShell 命令（快捷）
 
 ```powershell
-type C:\Users\您的用户名\vpssshkey.pub | ssh root@45.192.202.30 "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+type C:\Users\您的用户名\vpssshkey.pub | ssh root@66.66.66.66 "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
 ```
 
 ## 第三阶段：FinalShell 连接配置
