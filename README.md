@@ -1,4 +1,10 @@
 # Debian 12 SSH 公钥登录配置手册
+🔐 Debian 12 SSH 公钥登录加固指南
+<p align="center"> <img src="https://img.shields.io/badge/Debian-12-red?logo=debian"> <img src="https://img.shields.io/badge/SSH-Secure-green?logo=gnubash"> <img src="https://img.shields.io/badge/Auth-PublicKey-blue"> <img src="https://img.shields.io/badge/Security-Hardened-success"> </p>
+
+🚀 本指南适用于：
+Windows 11 本地环境 + Debian 12 服务器
+实现 SSH 公钥登录 + 禁用密码登录（防爆破）
 
 本手册适用于将 Windows 11 作为本地环境，对远程 Debian 12 服务器进行公钥登录改造并禁用密码。
 
