@@ -33,7 +33,7 @@ chmod 600 ~/.ssh/authorized_keys
 ### 方法 B：使用 PowerShell 命令（快捷）
 
 ```powershell
-type C:\Users\您的用户名\vpssshkey.pub | ssh root@66.66.66.66 "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+type C:\Users\您的用户名\vpssshkey.pub | ssh root@您的VPS公网IP "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
 ```
 
 ## 第三阶段：FinalShell 连接配置
@@ -90,7 +90,7 @@ sshd -T | grep -E "passwordauthentication|kbdinteractiveauthentication"
 在本地 PowerShell 输入：
 
 ```powershell
-ssh -o PubkeyAuthentication=no root@66.66.66.66 ##您VPS的IP
+ssh -o PubkeyAuthentication=no root@66.66.66.66 ##改成您VPS的公网IP
 ```
 
 - **预期结果**：提示 `Permission denied (publickey)` 且无法输入密码，说明加固成功。
