@@ -9,18 +9,18 @@
 2. 执行命令：
 
 ```powershell
-ssh-keygen -t ed25519 -f C:\Users\gaoshuiquan\acck
+ssh-keygen -t ed25519 -f C:\Users\您的用户名\vpssshkey
 ```
 
 3. **结果说明**：
-   - `acck`：**私钥**（你的钥匙，绝对不能泄露）
-   - `acck.pub`：**公钥**（锁头，上传到服务器）
+   - `vpssshkey`：**私钥**（你的钥匙，绝对不能泄露）
+   - `vpssshkey.pub`：**公钥**（锁头，上传到服务器）
 
 ## 第二阶段：上传公钥至服务器
 
 ### 方法 A：使用 FinalShell（图形化）
 
-1. 用记事本打开本地 `acck.pub`，复制内容。
+1. 用记事本打开本地 `vpssshkey.pub`，复制内容。
 
 2. 登录服务器，执行：
 
@@ -33,7 +33,7 @@ chmod 600 ~/.ssh/authorized_keys
 ### 方法 B：使用 PowerShell 命令（快捷）
 
 ```powershell
-type C:\Users\gaoshuiquan\acck.pub | ssh root@45.192.202.30 "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+type C:\Users\您的用户名\vpssshkey.pub | ssh root@45.192.202.30 "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
 ```
 
 ## 第三阶段：FinalShell 连接配置
@@ -42,7 +42,7 @@ type C:\Users\gaoshuiquan\acck.pub | ssh root@45.192.202.30 "mkdir -p ~/.ssh && 
 
 2. **认证方式**：选择 **"公钥"**。
 
-3. **私钥文件**：导入本地的 **acck** 文件。
+3. **私钥文件**：导入本地的 **vpssshkey** 文件。
 
 4. **密码**：填写生成密钥时设置的 passphrase（若无则留空）。
 
@@ -90,7 +90,7 @@ sshd -T | grep -E "passwordauthentication|kbdinteractiveauthentication"
 在本地 PowerShell 输入：
 
 ```powershell
-ssh -o PubkeyAuthentication=no root@45.192.202.30
+ssh -o PubkeyAuthentication=no root@66.66.66.66 ##您VPS的IP
 ```
 
 - **预期结果**：提示 `Permission denied (publickey)` 且无法输入密码，说明加固成功。
