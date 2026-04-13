@@ -1,4 +1,4 @@
-#🔐 Debian 12 SSH 公钥登录配置手册
+🔐 Debian 12 SSH 公钥登录配置手册
 <p align="center"> <img src="https://img.shields.io/badge/Debian-12-red?logo=debian"> <img src="https://img.shields.io/badge/SSH-Secure-green?logo=gnubash"> <img src="https://img.shields.io/badge/Auth-PublicKey-blue"> <img src="https://img.shields.io/badge/Security-Hardened-success"> </p>
 
 🚀 本指南适用于：
