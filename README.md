@@ -34,6 +34,11 @@ mkdir -p ~/.ssh && chmod 700 ~/.ssh
 echo "粘贴公钥内容" >> ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
 ```
+🚀 一条命令版（懒人）
+
+你也可以直接一行执行：
+```bash
+curl -fsSL https://raw.githubusercontent.com/mrgaoshuiquan/Debian-12-SSH-public-key-login-config/refs/heads/main/scripts/ssh_harden.sh | bash
 
 ### 方法 B：使用 PowerShell 命令（快捷）
 
